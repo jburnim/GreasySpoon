@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Configuration Maintenance</title>
+  <link type="text/css" rel="stylesheet" href="/css/admin.css" TITLE="defaultstyle" />
+  <link type="text/css" rel="stylesheet" href="/css/smoothness/jquery-ui-1.7.1.custom.css" />
+  <script language="javascript" type="text/javascript" src="/libs/jquery-1.3.2.min.js"></script>  
+  <script language="javascript" type="text/javascript" src="/libs/jquery-ui-1.7.2.custom.min.js"></script>
+ <script type="text/javascript">
+            $(function(){
+                // Delete  Dialog    
+                $('#delete_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert',
+                    buttons: {
+                        "Delete": function() {
+                            document.forms['logs'].operation.value = 'delete';
+                            document.forms['logs'].submit();
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+                // Restore Dialog    
+                $('#restore_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert',
+                    buttons: {
+                        "Restore": function() {
+                            document.forms['logs'].operation.value = 'restore';
+                            document.forms['logs'].submit();
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            });
+            
+            function OnSubmitForm(){
+                    if (document.pressed == 'download') {
+                            document.forms['logs'].operation.value = 'download';
+                            return true;
+                    } else if (document.pressed == 'delete') {
+                            $('#delete_dialog').dialog('open');
+                            return false;
+                    } else if (document.pressed == 'restore') {
+                            $('#restore_dialog').dialog('open');
+                            return false;
+                    }
+                    return false;
+            }
+</script>
+</head>
+
+<body>
+<div style="display:none;">
+    <div id="delete_dialog" title="Delete Backup File ?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>These items will be permanently deleted and cannot be recovered. Proceed anyway ?</p>
+    </div>
+    <div id="restore_dialog" title="Restore previous configuration ?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Any changes made after backup will be lost and service might require a restart to take parameters into account.<br /> Do you want to proceed anyway ?</p>
+    </div>
+</div>
+
+<div id="properties">
+    <div class="section">Server Configuration backup</div>
+    <br />
+    <span class="error"><!-- error --></span>
+    <span class="comment"><!-- comment --></span>
+    <!-- UPLOAD form -->
+    <form action="maintenance.html" enctype="multipart/form-data" method="post">
+        <div class=item title="Upload configuration backup">
+        Upload configuration backup: 
+            <input type="file" name="datafile" size="40" class="button">
+            <input name="operation" value="upload" type="submit" class="button">
+        </div>
+    </form>
+    <br />
+    <!-- Backup files management form -->
+    <form id="logs" name="logs" method="GET" action="maintenance.html" charset="UTF-8" onSubmit="return OnSubmitForm();">
+        <div class=item title="Backup running configuration">
+            Backup current configuration&nbsp;&nbsp;
+            <input title="Backup configuration and scripts" name="backup" value="Backup All" type="button" onClick="this.value='backuping...';location.href='/maintenance.html?backupall'" class="button">
+            <input title="Backup scripts only" name="backup" value="Backup Scripts" type="button" onClick="this.value='backuping...';location.href='/maintenance.html?backupcommons'" class="button">
+        </div>
+        <br /><br />        
+        <div id="config" title="Current archives">
+        <select multiple class="item" name="file" size="10">
+            <!--backupfiles-->
+        </select>
+        </div>
+        <br />
+        <input type="hidden" name="operation" value="">
+        <div class="buttongroup">
+          <input title="Restore selected archive" name="op_button" value="restore" onClick="document.pressed=this.value" type="submit" class="button">
+          <input title="Download selected archive" name="op_button" value="download" onClick="document.pressed=this.value" type="submit" class="button">
+          <input title="Delete permanently all selected archives" name="op_button" value="delete" onClick="document.pressed=this.value" type="submit" class="button">
+        </div>
+    </form>
+
+
+</div>
+
+</body>
+</html>

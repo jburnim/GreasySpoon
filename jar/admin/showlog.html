@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>%name% - last requests</title>
+  <script language="javascript" type="text/javascript" src="/libs/jquery-1.3.2.min.js"></script>
+  <script language="javascript" type="text/javascript" src="/libs/jquery-ui-1.7.2.custom.min.js"></script>
+  <script type="text/javascript" src="/libs/tail.js"></script>  
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle" />
+  <link type="text/css" href="css/smoothness/jquery-ui-1.7.1.custom.css" rel="Stylesheet" />	
+ </head>
+
+<body onUnload="stopTail()">
+<div id="properties" height="100%">
+    <div class="section">
+	    <table width="100%" cellpadding="1" cellspacing="1" >
+	      <tr>
+	      	<td align="left">%name% - last requests 
+	      	<td id="expandbutton" align="right" >
+	      		<a class="fg-button fg-button-icon-left ui-state-default ui-corner-all ui-icon ui-icon-extlink" onClick="window.open('/showlog.html?logname=%name%','_blank','status=no, menubar=no, scrollbars=yes, toolbar=no, location=no, directories=no,resizable=yes')"></a>
+	      	</td>
+	      </tr>
+	   </table>
+    </div>
+
+    <textarea id="logdiv" class="listing" cols="140" rows="35" readonly wrap="off"><!--logfile--></textarea>
+
+    <div align="center" height="30px">
+<button id="tailbutton" onclick="switchTail('/showlog.html?logname=%name%&tail=true');" class="fg-button ui-state-default fg-button-toggleable ui-corner-all ui-state-active" type="button">Tail</button>
+<button onclick="$('#logdiv').html('');" class="fg-button ui-state-default ui-corner-all" type="button" >Clear</button>
+</div>
+</div>
+
+
+<div id="result"></div>
+</body>
+</html>

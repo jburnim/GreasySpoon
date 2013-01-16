@@ -1,0 +1,450 @@
+/*font family for page. If you have another style sheet that sets font family, you can delete this rule*/
+div, td, p {
+	font-family: Tahoma, Geneva;
+}
+
+/* Begin Main Page CSS */
+body {
+	margin:0;
+	background:#fff;
+    height: 90%;
+}
+
+#content {
+	width:100%;
+	position:absolute;
+	left:0px;
+	top:0px;
+	margin-left:0px;
+	background:#fff;
+}
+#top {
+	background:#FFFFFF;
+}
+#title {
+	background:#ffffff url('/img/logo.png') right no-repeat;
+	margin-right:0px;
+}
+#titlemain {
+	display:block;
+	z-index:4;
+	width:80%;
+	height:50px;
+	background:#ffffff url('/img/gs.png') left no-repeat;
+	margin-left:15px;
+}
+#titlemain span{
+	display:none;
+}
+#titlecomment {
+	font:12px Tahoma,Helvetica,Arial;
+	
+	letter-spacing:.4em;
+	font-weight:bold;
+	margin:0 0 0 5px;
+	padding:2px 0px;
+	color:#36393D;
+	text-decoration:none;
+	text-align:left;
+	text-indent:15px;
+}
+#titleversion {
+	display:block;
+	font:11px tahoma, times, serif;
+	letter-spacing:.2em;
+	font-weight:lighter;
+	margin:0;
+	padding:0px 0px;
+	/*background:#ABD119;*/
+    background:#FFFFFF url('/img/dolphin_bg.gif') repeat-x scroll left bottom;
+	color:#eeeeee;
+	text-decoration:none;
+	text-align:right;
+	margin-right:0px;
+    padding-bottom: 2px;
+}
+
+
+/* MESSAGES USING JQUERY */
+.toggler {
+    width: 100%; 
+    height: 20px; 
+    margin: -35px 0 25px 0;
+}
+html>.toggler {
+	 margin-top: -45px;/* IE hack*/
+} 
+
+
+
+#effect {width: 100%; height: 20px; padding: 0.1em; position: relative; }
+.ui-effects-transfer { border: 2px dotted gray; } 
+    
+/** Apparence des boutons */
+select {
+	border:1px solid;
+	border-color:#F4F4F4;
+	margin-left:20px;
+	font-weight: normal;
+	font-size:75%;
+}
+.button {
+   color:#29292A;
+   font-family:helvetica,sans-serif;
+   font-size:12px;
+   font-variant: small-caps;
+   font-weight:bold;
+   background-color:#ffffff;
+   border:1px solid;
+   border-color:#F4F4F4;
+}
+
+/** Positionnement des boutons */
+.buttongroup {
+   margin-left:0px;
+   font-size:14px;
+   float: none;
+   text-align: center;
+}
+
+/** 	TABLE	*/
+/**Entete d'un tableau*/
+.table {
+	margin-left:60px;
+	border:1px solid lightgrey;
+	color:#29292A;
+	text-align: center;
+	font-family: tahoma,Times,serif;
+}
+.tablehead {
+	color:#29292A;
+	font-weight: bold;
+	font-size:65%;
+}
+/**contenu d'un tableau*/
+.tablecontent {
+	font-weight: bold;
+	font-size:75%;
+}
+/**derniere ligne d'un tableau*/
+.tablelast {
+	font-weight: bold;
+	font-size:75%;
+}
+.table2 {
+	border:none;
+	text-align: center;
+	font-family: tahoma,Times,serif;
+}
+.tablehead2 {
+	color:#29292A;
+	font-weight: bold;
+	font-size:65%;
+}
+/**contenu d'un tableau*/
+.tablecontent2 {
+	margin-left:20px;
+	margin-left:20px;
+	font-weight: normal;
+	font-size:75%;
+}
+
+.conditions {
+	font-weight: normal;
+	text-align: left;
+	width: 400px;
+	max-width: 400px;
+	font-size:75%;
+}
+
+
+
+a:focus {
+	color:#AAAAAA;
+	border : 0px;
+}
+
+input {
+	border:1px solid lightgrey;
+	background-color:white;
+	text-align: left;
+	font-family: tahoma,times,serif;
+	font-size:75%;
+	color:29292A;
+}
+input:disabled {
+	background-color: lightgrey;
+	 font-family:helvetica,sans-serif;
+   font-size:12px;
+   font-variant: small-caps;
+   font-weight:bold;
+   border:1px solid;
+   border-color:#F4F4F4;
+}
+
+button::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="file"] > input[type="button"]::-moz-focus-inner {
+border: 0px transparent;
+}
+
+#coloredtextarea {
+	width: 100%;
+}
+.listing {
+	display: block;
+	background-color:white;
+	text-align: left;
+	font-family: monospace,tahoma,times,serif;
+	font-size: 75%;
+	width: 100%;
+	color: #29292A;
+	margin-bottom:30px;
+}
+
+.disabled {
+	border:1px solid lightgrey;
+	background-color:lightgrey;
+	text-align: center;
+	font-family: tahoma,times,serif;
+	font-size:75%;
+	color:29292A;
+}
+.comment {
+	border:none;
+	background-color:white;
+	text-align: left;
+	font-family: tahoma,times,serif;
+	font-size:65%;
+	color:#3A4392;
+}
+
+
+/* End Main Page CSS */
+
+#menu {
+  border-top:3px solid #ffffff;
+  background:#fff;
+  float:left;
+  width:100%;
+  font: 11px Helvetica,Arial;
+  line-height:normal;
+  padding-bottom:10px;
+}
+#menu ul {
+  margin:0;
+  padding:0px 0px 0;
+  list-style:none;
+  }
+#menu li {
+  float:left;
+  /*background:#ABD119;*/
+  background:#FFFFFF url('/img/dolphin_bg.gif') repeat-x scroll left bottom;
+  margin:0;
+  margin-left:2px;
+  padding:4 0 0 9px;
+}
+#menu .right {
+  float:right;
+}
+
+
+#menu a {
+  float:left;
+  display:block;
+  /*background:#ABD119;*/
+  background:#FFFFFF url('/img/dolphin_bg.gif') repeat-x scroll left bottom;
+  padding:0px 15px 4px 6px;
+  text-decoration:none;
+  font:12px Helvetica,Arial;
+  font-weight:bold;
+  color:#000000;
+  outline-style:none;
+  outline-width:0;
+}
+
+#menu li:hover {
+  text-decoration:underline;
+}
+#menu li:hover a {
+  color:#1F3522;text-decoration:none;
+}
+#menu img {
+    border-style: none;
+}
+#menu li:active{
+  text-decoration:none;border-style: none;
+}
+#menu .current {
+  color:#ffffff;text-decoration:underline;
+}
+#menu .current a {
+  color:#fff;padding-bottom:5px;text-decoration:none;
+ }
+#localmenu a a.current{
+  color:transparent;text-decoration:none;border-style: none;
+}
+
+#properties {
+	margin-top: 40px;
+	text-align: left; width: 95%;
+}
+
+#config {
+	margin-top: 20px;
+	text-align: left; width: 100%;
+}
+.confcat {
+	border:none;
+	text-decoration:none; 
+	font-family: "Lucida Console", Monaco;
+	font-weight: normal;
+	font-size:85%;
+	color:#919191; 
+}
+.section {
+	border:solid thin #c2c2c2;
+	text-decoration:none; 
+	font-family: "Lucida Console", Monaco;
+	font-weight: normal;
+	font-size:85%;
+	color:#919191;
+    padding: 2px 0 0 5px;
+    margin-bottom: 5px;
+}
+.item {
+	padding-left:40px;
+	font-size:14px;
+    margin-bottom: 5px;
+}
+
+.param {
+	float:left;
+	width: 300px;
+	padding-left:40px;
+	font-size:14px;
+}
+.value {
+	display: block;
+	font-size:14px;
+	padding-left:60px;
+}
+/**Error Messages*/
+.error {
+	font-weight: normal;
+    font-size:10px;
+    font-family: "Lucida Console", Monaco;
+	color: #E60003;
+}
+/* End Tab CSS */
+
+
+
+/**********************************************
+ *****		     Tree Menu		  *****
+ **********************************************/
+
+/*Control DIV for expand all and collapse all links*/
+#treeMenuControl {
+	margin: 0 0 12px 0;
+	font-size: 10px;
+	display: none;
+	/*/*/display: block; /* Hide from NN4*/
+}
+#treeMenuControl a:link {
+	color: #666666;
+}
+#treeMenuControl a:visited {
+	color: #666666;
+}
+#treeMenuControl a:hover {
+	color: #FF9900;
+}
+
+
+/*Sets line-height of all menuitems*/
+#treeMenuItem div {
+	/*/*/line-height: 1.5; /* */
+}
+
+
+/*Sets a bottom margin for each top-level link*/
+#treeMenuItem div {
+	margin: 0 0 0 0;
+	font-size: 13px;
+}
+
+/*second level menuitem divs and lower -Cascades to lower levels-*/
+/*Sets left margin to .6em establishing a fluid cascading indent*/
+/*Sets a left border*/
+#treeMenuItem div div {
+	margin: 0 0 0 1em;
+}
+
+/*The Link style for top-level menuitems and is read by all browsers*/
+#treeMenuItem div a {
+	color: #000;
+	font-size: 1em;
+}
+/*The Link style for top-level menuitems hidden from Netscape 4*/
+#treeMenuItem div a {
+	color: #666666;
+	padding: 0 0 0 0;
+	text-decoration: none;
+}
+#treeMenuItem div a:visited {
+	color: #999999;
+}
+#treeMenuItem div a:hover a.current{
+	color:  #FF9900;
+}
+
+/*The Link and visited styles combined for second-level menuitems*/
+#treeMenuItem div div a, #treeMenuItem div div a:visited {
+	color: #999999;
+	font-size: .8em;
+	text-decoration: none;
+}
+#treeMenuItem div div a:hover a.current{
+	/*color: #ffffff;*/
+	color: #000000;
+	font-size: 0.8em;
+	text-decoration: underline;
+	color:  #FF9900;
+}
+
+/*rules programatically assigned to parent links when image-based plus and minus option is selected. The padding on the 4 following rules supercedes (via !important) the padding on the treeMenuItem div a selector when you've chosen the option to use images for the plus and minus signs*/
+.treeplusmark {
+	background-repeat: no-repeat;
+	background-image: url('/img/tm_fclosed.gif');
+	background-position: 0px 50%;
+	padding: 0 0 0 20px !important;
+}
+.treeminusmark {
+	background-repeat: no-repeat;
+	background-image: url('/img/tm_fopen.gif');
+	background-position: 0px 50%;
+	padding: 0 0 0 20px !important;
+}
+
+/*rule programatically assigned to child links when image-based plus and minus option is selected*/
+.treedefmark {
+	background-repeat: no-repeat;
+	background-image: url('/img/tm_page.gif');
+	background-position: 0px 50%;
+	padding: 0 0 0 20px !important;
+}
+
+/*rules programatically assigned to page link correesponding to current page (You are Here)*/
+.treecurrentmark {
+	font-size: .8em;
+	/*font-weight: bold;*/
+	background-repeat: no-repeat;
+	background-image: url('/img/tm_page.gif');
+	text-transform: uppercase;
+	color: #FF9900 !important;
+	padding: 0 0 0 20px !important;
+}
+

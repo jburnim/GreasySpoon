@@ -1,0 +1,39 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>GreasySpoon Administration</title>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <SCRIPT>
+	<!--- Function used to change selected menu classname
+	function select(menuId) {
+              document.getElementById("data").className = "unselected";
+  			  document.getElementById("maintenance").className = "unselected";
+              document.getElementById("scripts").className = "unselected";
+              document.getElementById(menuId).className = "current";
+	}
+	// end hiding from old browsers -->
+	</SCRIPT>
+</head>
+
+<body id="top">
+	<div id="title">
+		<div id="titlemain"><span>GreasySpoon</span></div>
+		<div id="titlecomment"><span>Developer edition</span></div>
+		<div id="titleversion"><span><!--projectversion--></span></div>
+	</div>
+
+	<div id="menu">
+		<ul>
+            <li id="data" class="unselected"><a href="menudata.html" title="Data" target="localmenu">Data</a></li>
+			<li id="maintenance" class="unselected"><a href="menumaintenance.html" title="Maintenance" target="localmenu">Maintenance</a></li>
+			<!--<li id="setup" class="unselected" ><a href="menusetup.html" title="Setup" target="localmenu">Setup</a></li> -->
+			<li id="scripts" class="unselected"><a href="menuscripts.html" title="Scripts" target="localmenu">GreasySpoon Scripts</a></li>
+			<li id="right" class="right"><a href="/logout.html" title="Logout" target="_parent">logout</a></li>
+		</ul>
+	</div>
+	
+</body>
+</html>

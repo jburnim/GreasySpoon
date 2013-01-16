@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>Versions</title></head>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+<body>
+
+<SCRIPT type="text/JavaScript">
+<!--   // Check user key entry and accept entry only if it is numeric
+function check_numeric(event)
+	{
+		if (event.keyCode > 57 || event.keyCode == 42 || event.keyCode == 47 || (event.keyCode > 43 && event.keyCode < 46) || (event.keyCode > 32 && event.keyCode < 40)) event.returnValue = false;
+           	if (event.which > 57 || event.which == 42 || event.which == 47 || (event.which > 43 && event.which < 46) || (event.which > 32 && event.which < 40)) return false;
+		return true;
+	}
+//-->  // Fin de la partie cachée
+</SCRIPT>
+<br>
+<span class="error"><!-- error --></span>
+<span class="comment"><!-- comment --></span>
+<form method="post" action="/listrespscripts.html" charset="UTF-8">
+    <div id="config">
+            <div class=confcat>
+            	Scripts applying on servers responses
+    </div>
+	<br>
+    <input class="buttonSmall" value="New Script" onclick="location.href='/createrespscript.html'" name="New Rule" type="button">
+    <br><br>
+    <table class="table" border="0" cellspacing="1">
+        <tbody>
+                <tr class="tablehead">
+                    <th title="Delete script. warning: deletion is definitive" width="20px">Del</th>
+					<th title="Enable/disable script" width="20px">Enable</th>
+                    <th width="40px">Edit</th>
+                    <th width="60px">Rule #</th>
+                    <th width="150px">Name</th>
+					<th width="100px">Language</th>
+                    <th width="400px">Description</th>
+                 </tr>
+                <!--content-->
+       </tbody>
+   </table>
+
+    <br><br>
+    <div class="buttongroup">
+      <input name="Submit" value="Apply" type="submit" onClick="this.value='updating...'" class="button">
+      &nbsp;&nbsp;&nbsp; 
+      <input name="Reset" value="Cancel" type="reset" class="button">
+    </div>
+</form>
+</body>
+</html>

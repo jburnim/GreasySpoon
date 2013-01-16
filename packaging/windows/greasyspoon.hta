@@ -1,0 +1,566 @@
+<HTML>
+<HEAD>
+<TITLE>GreasySpoon Control Panel</TITLE>
+<META HTTP-EQUIV="MSThemeCompatible" CONTENT="Yes" />
+<HTA:APPLICATION
+   ID="GS"
+   APPLICATIONNAME="GreasySpoon Control Panel"
+   CAPTION="Yes"
+   BORDER="thick"
+   ICON=".\admin\favicon.ico"
+   SHOWINTASKBAR="Yes"
+   SINGLEINSTANCE="Yes"
+   SYSMENU=""
+   WINDOWSTATE=""
+   VERSION="1.0.8"
+   INNERBORDER="No"
+   SELECTION="Yes"
+   MAXIMIZEBUTTON=""
+   MINIMIZEBUTTON=""
+   NAVIGABLE="No"
+   CONTEXTMENU=""
+   BORDERSTYLE=""
+   SCROLL="No"
+   >
+
+
+<!-- ########################################################################## -->	
+<!--											JSSCRIPT CONTROLING INTERFACE 									-->
+<!-- ########################################################################## -->	
+	
+  <SCRIPT TYPE="text/Javascript">
+  
+  	var PATH = GS.commandLine;
+	PATH = PATH.substring(1, PATH.lastIndexOf("\\")+1);
+	
+	//var GSPARAMETERS = ' -Djava.ext.dirs="'+PATH+'pkg\\ext" -Xms256m -Xmx256m -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true';
+	var GSPARAMETERS = '-Xms256m -Xmx256m -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true';
+
+	window.resizeTo(640,480);
+	var left = (screen.width/2)-(640/2);
+	var top = (screen.height/2)-(480/2);
+	window.moveTo(left,top);
+	
+	var PID = -1;
+	var runInFront = false;
+	var isApplicationRunning = false;
+
+	// Creation of ActiveX  object allowing to manipulate files.
+	var FileManager = new ActiveXObject("Scripting.FileSystemObject");
+	if ( ! FileManager.FolderExists(PATH+".tmp\\") ){
+				FileManager.CreateFolder(PATH+".tmp\\");
+	}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Execute silently a shell command. 
+		* Store shell result in a temporary file, load the result after execution and clean up this file.
+		*/
+		function execSilently(commandline){
+			// Créons désormais un fichier texte vide à la racine du disque C.
+			//FileManager.CreateTextFile(PATH+"out_tmp.txt", true);
+			
+			var WshShell = new ActiveXObject("WScript.Shell");
+			WshShell.CurrentDirectory = PATH;
+			WshShell.run('%comspec% /c '+commandline+' > "'+PATH+'out_tmp.txt"',0,true);
+		
+			// Nous pouvons lire les fichiers
+			var result = "";
+			try {
+				var file = FileManager.OpenTextFile(PATH + "out_tmp.txt", 1);
+				result = file.ReadAll();
+				file.Close();
+			} catch (error) {
+				//file does not exist or is empty. Just keep result as an empty string
+			}
+			try {
+				FileManager.DeleteFile(PATH + "out_tmp.txt");
+			} catch (error) {}
+			return result;
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Save PID to disk (overwrite old one if any)
+		*/
+		function savePID(newpid){
+
+			FileManager.CreateTextFile(PATH+".tmp\\pid.txt", true);
+			var file = FileManager.OpenTextFile(PATH+".tmp\\pid.txt", 2);
+			file.Write(newpid);
+			file.Close();
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Launch application in background, and get back the process PID associated.
+		* Save PID into a file in order to be able to kill application if needed.
+		*/
+		function launch() { 
+			PID = startApplicationHided();
+			savePID(PID);
+			runInFront = false;
+		}
+		
+		/**
+		* Launch application in front. Save specific PID in that case (in order not to keep an old PID)
+		*/
+		function launchFront(){
+			startFrontApplication();
+			savePID("-2");
+			runInFront = true;
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------		
+
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Stop application by killing associated PID (only if PID is higher than 0)
+		*/
+		function stopApplication(){
+			if (PID < 0 ) return;
+			killApplication(PID);
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		function AddToOptionList(OptionList, OptionText, OptionValue, comments) {
+			// Add option to the bottom of the list
+			var option = new Option(OptionText, OptionValue);
+			option.title = comments;
+			OptionList[OptionList.length] = option;
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Simple trim operation on strings (remove duplicate whitespaces)
+		*/
+		function trim (myString) {
+			return myString.replace(/^\s+/g,'').replace(/\s+$/g,'')
+		} 
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Use GreasySpoon native command to populate list of available and installed packages
+		*/
+		function populatePackages() {
+			var response = execSilently("java.exe -jar greasyspoon.jar -e list");
+			if (response.indexOf("Package ID") <0) return;
+			
+			
+			var availableExtensionsList = document.getElementById("availableExtensions");
+			var installedExtensionsList = document.getElementById("installedExtensions");
+			
+			availableExtensionsList.length=0;
+			installedExtensionsList.length=0;
+			
+			var elements = response.split("----------------------------------\r\n");
+			for (i=0; i<elements.length; i++){
+				var pos = elements[i].indexOf("Package ID: ");
+				if ( pos < 0 ) continue;
+				var packageName = trim( elements[i].substring( 0, elements[i].indexOf("\n") ) );
+				pos = pos + "Package ID: ".length;
+				var packageID = trim( elements[i].substring( pos, elements[i].indexOf("\n",pos) ) );
+				
+				pos = elements[i].indexOf("status: ") + "status: ".length;
+				var packageStatus = trim( elements[i].substring( pos, elements[i].indexOf("\n",pos) ) );
+				
+				if ( packageStatus === "uninstalled" ) {
+					AddToOptionList(availableExtensionsList, packageName, packageID, elements[i]);
+				} else {
+					AddToOptionList(installedExtensionsList, packageName, packageID, elements[i]);
+				}
+			}
+			
+			if (availableExtensionsList.length == 0) {
+				AddToOptionList(availableExtensionsList, "  -  ",  "");
+				document.getElementById("install").disabled = true;
+			} else {
+				document.getElementById("install").disabled = isApplicationRunning;
+			}
+
+			if (installedExtensionsList.length == 0) {
+				AddToOptionList(installedExtensionsList, "  -  ",  "");
+				document.getElementById("uninstall").disabled = true;
+			} else {
+				document.getElementById("uninstall").disabled = isApplicationRunning;
+			}
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		var _lock = false;
+		var _timer;
+		/**
+		*	Test if application is running, by checking of port 1344 is open or not. Adapt interface accordingly.
+		*  Detection is made every seconds in order to prevent delay in start/stop operations.
+		*/
+		function testApplicationState(init) {
+			if (_lock) return;
+			_lock = true;
+			var response = trim(execSilently('netstat.exe -an | find ":1344" /C'));
+			var oldState = isApplicationRunning;
+			
+			if (response === "1" ) {
+				isApplicationRunning = true;
+			} else {
+				isApplicationRunning = false;
+			}
+			
+			if (oldState !== isApplicationRunning || init == true ){
+			
+				if (response === "1" ) {
+					isApplicationRunning = true;
+					document.getElementById("startApplication").disabled = true;
+					document.getElementById("startFrontApplication").disabled = true;
+					document.getElementById("connect").disabled = false;
+					document.getElementById("stopApplication").disabled = runInFront;
+					if (PID === -1) {
+						var FileManager = new ActiveXObject("Scripting.FileSystemObject");
+						var result = -1;
+						try {
+							file = FileManager.OpenTextFile(PATH+".tmp\\pid.txt", 1);
+							result = trim(file.ReadAll());
+							file.Close();
+						} catch (error) {
+						}
+						PID = result;
+						if ( PID === "-2" ) {
+							runInFront = true;
+							PID = -2;
+						}
+						
+					}
+				} else {
+					isApplicationRunning = false;
+					document.getElementById("startApplication").disabled = false;
+					document.getElementById("startFrontApplication").disabled = false;
+					document.getElementById("stopApplication").disabled = true;
+					document.getElementById("connect").disabled = true;
+				}
+				populatePackages();
+			}
+			
+			if (_timer !== null) clearTimeout(_timer);
+			_timer = setTimeout("testApplicationState(false)",1000);
+			_lock = false;
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		function installExtension(){
+			var sel = document.getElementById("availableExtensions");
+			var selectedvalue = sel.options[sel.selectedIndex].value;
+			var WshShell = new ActiveXObject("WScript.Shell");
+			WshShell.CurrentDirectory = PATH;
+			WshShell.run('%comspec% /c  java -jar greasyspoon.jar -e install ' + selectedvalue,4,true);
+			//java -jar greasyspoon.jar -e install %txt%
+			populatePackages();
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		function unInstallExtension(){
+			var sel = document.getElementById("installedExtensions");
+			var selectedvalue = sel.options[sel.selectedIndex].value;
+			var WshShell = new ActiveXObject("WScript.Shell");
+			WshShell.CurrentDirectory = PATH;
+			WshShell.run('%comspec% /c  java -jar greasyspoon.jar -e uninstall ' + selectedvalue,4,true);
+			//java -jar greasyspoon.jar -e uninstall %txt%
+			populatePackages();
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------		
+		/**
+		* Find out administration interface parameters from conf (port and protocol) and launch default web browser with it
+		*/
+		function connect(){
+			
+			var file = FileManager.OpenTextFile(PATH + "conf\\icapserver.conf", 1);
+			var result = "";
+			try {
+				result = file.ReadAll();
+			} catch (error) {
+			}
+			file.Close();
+			
+			var port = 8088;
+			var protocol = "http";
+			var pos = result.indexOf("\nadmin.port ");
+			if (pos > 0) {
+				port = trim(result.substring(pos + "\nadmin.port ".length, result.indexOf("\n",pos+1)));
+			}
+			
+			pos = result.indexOf("\nadmin.ssl ");
+			if (pos > 0) {
+				protocol = trim(result.substring(pos + "\nadmin.ssl ".length, result.indexOf("\n",pos+1)));
+				if (protocol.toLowerCase() === "true") {
+					protocol = "https";
+				} else {
+					protocol = "http";
+				}
+			}
+			
+		    var shell = new ActiveXObject("WScript.Shell");
+			shell.run(protocol + "://127.0.0.1:"+port+"/index.html");
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------		
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Just launch GreasySpoon web site for help
+		*/
+		function home(){
+		    var shell = new ActiveXObject("WScript.Shell");
+			shell.run("http://greasyspoon.sourceforge.net/scripts_intro.html");
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Initialize state, check for switches on command line and populate packages
+		*/
+		function init() {
+			testApplicationState(true);
+			var commandline = GS.commandLine;
+			if ( commandline.indexOf("/") !== -1) {
+				commandline = trim( commandline.substring(commandline.indexOf("/")+1) ).toLowerCase();
+				if ( commandline == "start"  ){
+					if ( isApplicationRunning == false ) launch();
+					exit();
+				} else if ( commandline == "stop" ) {
+					if ( isApplicationRunning == true ) stopApplication();
+					exit();
+				} else {
+					alert('Available switches: \n "/start" : to start the application and exit,\n "/stop" : to stop the application and exit,\n "/?" : this help');
+				}
+			}
+			populatePackages();
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		
+		//------------------------------------------------------------------------------------------------------------------------------------------
+		/**
+		* Ensures that no timer are remaining and leave out
+		*/
+		function exit() {
+			if (_timer !== null) clearTimeout(_timer);
+			window.close();
+		}
+		//------------------------------------------------------------------------------------------------------------------------------------------
+  </SCRIPT>
+  
+<!-- ########################################################################## -->	
+<!--											VBSCRIPTS CONTROLING PROCESS 									-->
+<!-- ########################################################################## -->	
+  <SCRIPT TYPE="text/VBScript">
+	'--------------------------------------------------------------------
+	' Start GS application in background and get back PID
+	'--------------------------------------------------------------------
+    Function startApplicationHided()
+		Set WshShell = CreateObject("WScript.Shell" )
+		Set oExec = WshShell.Exec("javaw.exe "+GSPARAMETERS+" -jar greasyspoon.jar")
+		startApplicationHided = ""& oExec.ProcessID
+    End Function
+	
+	'--------------------------------------------------------------------
+	' Start GS application in foreground
+	'--------------------------------------------------------------------
+    Function startFrontApplication()
+		Const NORMAL_WINDOW = 1
+		Set objShell = CreateObject("Shell.Application")
+		objShell.ShellExecute "java.exe", GSPARAMETERS+" -jar greasyspoon.jar", , , NORMAL_WINDOW
+    End Function
+	
+	'--------------------------------------------------------------------
+	' Kill up application with given PID
+	'--------------------------------------------------------------------
+	Sub killApplication(PID)
+		 Const strComputer = "." 
+		  Dim objWMIService, colProcessList
+		  Set objWMIService = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\" & strComputer & "\root\cimv2")
+		  Set colProcessList = objWMIService.ExecQuery("SELECT * FROM Win32_Process WHERE   ProcessId = '" & PID & "'")
+		  For Each objProcess in colProcessList 
+			objProcess.Terminate() 
+		  Next
+	End Sub
+	</SCRIPT> 
+
+	
+<!-- ########################################################################## -->	
+<!--											APPLICATION STYLE 															-->
+<!-- ########################################################################## -->	
+<style type="text/css"> 
+    body  {
+		background: #FFFFFF;
+		margin: 0px; 
+		padding: 0px;
+		text-align: left;
+		color: #000000;
+		font-family: Helvetica;
+		font-size: 11px;
+    }
+	
+	input  {
+		font-family: Tahoma;
+		font-variant: small-caps;
+	}
+	
+    .container {
+		border: 1px solid #CCCCCC;
+		padding: 5px;
+		margin: 5px;
+		width: 100%;
+    } 
+	
+    #header {
+		padding: 0 10px 0 20px;
+		margin: 0px 0px 0px 0px; 
+    } 
+	
+	
+    #mainContent { 
+    	margin: 10px 10px 10px 10px; 
+    	padding: 0 10px;
+    } 
+    
+	#footer {
+		position: absolute;
+		text-align: center;
+		align: center;
+		padding: 10px;
+		bottom: 10px;
+		left: auto;
+		width: 100%;
+    }
+	
+	#donate{
+		position: absolute;
+		text-align: right;
+		align: right;
+		top: 25px;
+		right: 10px;
+	}
+	
+	.subtitle {
+		font-weight: bold;
+		color: #36393D;
+	}
+	.chapter {
+		font-weight: bold;
+		color: #333333;
+	}
+	
+	.container table th {
+		font-family: Helvetica;
+		font-size: 11px;
+	}
+	
+	.comment {
+		font-size: 9px;
+		color: #555555;
+	}
+	
+	select, option {
+		font-family: Helvetica;
+		font-size: 11px;
+	}
+	.line {
+		padding: 0;
+		margin: 0;
+		align: center;
+		width: 100%;
+		size: 1;
+	}
+</style>
+<!-- ########################################################################## -->	
+</HEAD>
+   
+   
+<BODY onload="init();" onbeforeunload="exit();">
+     <br />
+	 <div id="header">
+        <img src="admin/img/gs.png" alt="GreasySpoon" width="182" longdesc="http://greasyspoon.sourceforge.net" /><br />
+        <span class="subtitle">Scripting Factory for Core Network Services</span>
+		
+		<form id="donate" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+  <p>
+      <input type="hidden" name="cmd" value="_s-xclick" />
+      <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----MIIHLwYJKoZIhvcNAQcEoIIHIDCCBxwCAQExggEwMIIBLAIBADCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwDQYJKoZIhvcNAQEBBQAEgYBCncrqih1M/k7AIFmYvypoW6jR5PlxMf2u/Tsljax40aCsasxZn28liRMGtV4ax5ITeMI63gRgFk2qPMHXIn6U87WM06szrIqp+VFi+Z3SVTnP/PDFkJigZS6LmKEYMJtH8ziUCkC5vOsURKVPHgojseqmmt1l3qvsbienCngNCjELMAkGBSsOAwIaBQAwgawGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQIshVWhTrkSemAgYiJDxaAYiwEDWLom3ohbCV6ZQBj2iQmhnTL4NyCML4zJAllU9IbVFBirnPbtk3PyciwF9d46JmwTGhoVM1SY4cYUvG0zU0+AQ5+PzJ2NX+tiUJxjbqkzt6Jdv47hPNrnzdW08oy51YUrYy4+Z+2mPAzlr3qy8LjXjH/druZUMyJZZcEsu3H+4b5oIIDhzCCA4MwggLsoAMCAQICAQAwDQYJKoZIhvcNAQEFBQAwgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tMB4XDTA0MDIxMzEwMTMxNVoXDTM1MDIxMzEwMTMxNVowgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDBR07d/ETMS1ycjtkpkvjXZe9k+6CieLuLsPumsJ7QC1odNz3sJiCbs2wC0nLE0uLGaEtXynIgRqIddYCHx88pb5HTXv4SZeuv0Rqq4+axW9PLAAATU8w04qqjaSXgbGLP3NmohqM6bV9kZZwZLR/klDaQGo1u9uDb9lr4Yn+rBQIDAQABo4HuMIHrMB0GA1UdDgQWBBSWn3y7xm8XvVk/UtcKG+wQ1mSUazCBuwYDVR0jBIGzMIGwgBSWn3y7xm8XvVk/UtcKG+wQ1mSUa6GBlKSBkTCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb22CAQAwDAYDVR0TBAUwAwEB/zANBgkqhkiG9w0BAQUFAAOBgQCBXzpWmoBa5e9fo6ujionW1hUhPkOBakTr3YCDjbYfvJEiv/2P+IobhOGJr85+XHhN0v4gUkEDI8r2/rNk1m0GA8HKddvTjyGw/XqXa+LSTlDYkqI8OwR8GEYj4efEtcRpRYBxV8KxAW93YDWzFGvruKnnLbDAF6VR5w/cCMn5hzGCAZowggGWAgEBMIGUMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbQIBADAJBgUrDgMCGgUAoF0wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMDkwNDMwMDQ0MjEyWjAjBgkqhkiG9w0BCQQxFgQUeO/YC79OSsQZGSg2P+yM8WcAezUwDQYJKoZIhvcNAQEBBQAEgYBwrpQJW24cNxOJfKsMIzlmx0tW/ekLsmtdDjwQylQ+jAajWb2f95L8HI9XR+grRiVfBi/zDR2s152Ykhhy/tCCg+iPb3mA3hQqa2NBp91TEd5XyBqVmJsgRbU1r7JOQEMA4A04H9sOxvfq2ptO/JqmxRalmYUWtsNQALTenATKbA==-----END PKCS7-----
+" />
+    <input type="image" src="admin/img/donate.png" width="80px" border="0" name="submit" alt="Support this Project" />
+    </p>
+</form><br />
+		<!-- fin de #header -->
+	</div>
+	  
+	<HR class="line" />
+      
+    <div id="mainContent">
+		<p>
+			<div class="chapter">Start or Stop GreasySpoon Application</div>
+			<div class="container">
+				<table width="100%" border="0" cellspacing="1" cellpadding="1">
+				  <tr>
+					<td><div align="center"><INPUT TYPE="button" ID="startApplication" VALUE="Start" onclick="launch();" /></div></td>
+					<td><div align="center"><INPUT TYPE="button" ID="stopApplication" VALUE="Stop" onclick="stopApplication();" /></div></td>
+					<td><div align="center"><INPUT TYPE="button" ID="startFrontApplication" VALUE="Start in foreground" onclick="launchFront();" /></div></td>
+				  </tr>
+				</table>
+			</div>
+		</p>
+		
+		<p>
+			<div class="chapter">Use GreasySpoon Application</div>
+			<div class="container">
+				<table width="100%" border="0" cellspacing="1" cellpadding="1">
+				  <tr>
+					<td><div align="center"><INPUT TYPE="button" ID="connect" title="Default login/pwd: admin/admin" VALUE="Connect to admin interface" onclick="connect();" /></div></td>
+					<td><div align="center"><INPUT TYPE="button" ID="home" VALUE="Online Help" onclick="home();" /></div></td>
+				  </tr>
+				</table>
+			</div>
+		</p>
+		
+        <div class="chapter">Manage Language extensions*</div>
+		<div class="container">
+			<span class="comment">(* extensions modifications are only available when GreasySpoon is halted )</span>
+			<table width="100%" border="0" cellspacing="1" cellpadding="1">
+				<tr>
+					<th>Available Extensions</th>
+					<th>Installed Extensions</th>
+				</tr>
+				<tr>
+					<td>
+						<p  align="center">
+						<select id="availableExtensions"></select>
+						<input type="button" name="install" id="install" value="Install" onclick="installExtension();" />
+						</p>
+					</td>
+					<td>
+						<p align="center">
+						<select id="installedExtensions"></select>
+						<input type="button" name="uninstall" id="uninstall" value="uninstall" onclick="unInstallExtension();"  />
+						</p>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<br />
+		<!-- fin de #mainContent -->
+    </div>
+	<br />
+	<br />
+
+    <div id="footer">
+		<div align="center"><INPUT TYPE="button" ID="EXIT" VALUE="Exit" onclick="exit();" /></div>
+    </div><!-- fin de #footer -->
+
+</BODY>
+</HTML>
+
+
+

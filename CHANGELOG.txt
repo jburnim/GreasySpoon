@@ -1,0 +1,179 @@
+GreasySpoon CHANGELOG
+==================================================
+
+GreasySpoon v1.0.8
+---------------------------------------------------
+Bug fix:
+	#3291438: replace .bat file under windows by hta (html application)
+	.fix mime type set by default to "application" for empty responses (301,302,...)
+
+Enhancements:	
+	.changes in language extensions management to install files locally (and no more in system ext/ directory)
+	.rewrite (restore) windows support 
+
+GreasySpoon v1.0.7
+---------------------------------------------------
+Bug fix:
+	#3109907: fix issue with empty 'includes' and 'excludes' in scripts 
+	#3109911: fix/enhance 204 support
+
+
+GreasySpoon v1.0.6
+---------------------------------------------------
+Bug fix:
+	#3107118: Scheme parsing error when using FTP over HTTP
+	#3107121: Core ICAP stack will fail to handle responses exceeding 2 GB
+	#3107122: Content-Length management update to conform to HTTP 1.0
+
+GreasySpoon v1.0.5
+---------------------------------------------------
+Bug fix:
+	#3022771: ICAP failure when processing corrupted gzip files
+
+
+GreasySpoon v1.0.4
+---------------------------------------------------
+Bug fix:
+    .connection drop when back-end servers take too long to reply
+	.incorrect log message when a connection is reset by end-user
+    .bug in log facility when starting in "CONFIG" mode
+	.Inactivation of daemon mode by default (too many platform dependent issues)
+
+Enhancements:	
+	.Minor changes in default configuration to easier use for beginners
+	.Reduce log compression overhead
+
+GreasySpoon v1.0.3
+---------------------------------------------------
+Bug fix:
+    #2975924: failure creating real time request mode scripts
+    .regression in add-on services (echo, preview, compressor)
+
+Enhancements:
+    #2978060: Option added in web interface to clear/follow the log file view
+    #2978050: Requested URL made available directly to all scripts "requestedurl"
+    .method getUnderlyingBytes() provided to scripts in Java. Provides raw access to initial body in read only mode.  
+    .more consistent examples added (thanks to Ewan Sadie)
+    .Some core optimizations in ICAP connections handler
+    .log format cleanup to easier viewing
+    
+GreasySpoon v1.0.2
+---------------------------------------------------
+Bug fix:
+    .fix some issues with daemon mode
+	.some logging statements corrected/redirected 
+    #2928445: update output encoding according to modified headers 
+
+Enhancements:
+    .Enhanced behavior when placed under heavy/critical load
+		.thread pool added to ensure that max-connections threshold is not exceeded (like with Squid version 3.0.x)
+		.better behavior when reaching memory limits (survivor mode)
+		.small enhancements to reduce memory footprint
+		.try to correctly close connections even in critical situations
+    .Interface improvements
+		.zoom added for stat charts
+		.some details added regarding scripts options
+		.few javascript corrections/enhancements
+    
+GreasySpoon v1.0.1
+---------------------------------------------------
+    .Rewrite of extension mechanism in order to preserve unix rights (#2895407)
+    .charts PNG generation correction  (#2895409)
+    .error html code escaping to avoid interface impact(#2895411)
+    .Corrects Java getUrl() method (was typed as getURL() )
+    .Fix a bug when uploading files to unix via the web interface (backups, extensions,...)
+
+
+GreasySpoon v1.0.0
+---------------------------------------------------
+Bug fix:
+    .fix detection issue in MimeMagic for XHTML content (++Marton)
+    .Fix special case where error threshold was not deactivated even if configured
+    .Small bugfixes on web administration interface (+Sam)
+
+Enhancements:
+    .GreasySpoon extension packages created to easier languages add-on (and GS releases ...) 
+    .Java native scripts added
+        .provides Xml2Json function
+        .provides minify function (++Marton)
+        .basic autocompletion provided for Java native scripts
+    .Force encoding to UTF-8 instead of platform default for administration interface
+    .Custom script skeletons customisable for each language
+    .remove trace option (echo traffic to stdout - only for dev)
+    .Add statistic charts
+    .major interface refactoring: 
+        . stats, backup facilities, log options
+        . Replacement of Codepress by EditArea for development interface (web administration)
+        . use of jquery to improve some aspects
+    .Modification of log system (especially isolation of administration logs)
+    .Better reporting of scripts errors - script test system added 
+    .Ant task to build packages (+Brad)
+    .Windows installer (++Brad)
+    .Use of DaemonTools to improve system integration (++Brad)
+    .Inclusion of X509 libraries to embed SSL certificates generation
+    .improved script reloading management
+    .....and many more......
+    
+    
+GreasySpoon v0.5.6
+---------------------------------------------------
+Enhancements:
+    .possibility to disable errors bypass (GreasySpoon can now return an ICAP error in case of script failure)
+    .better scripts reloading event management
+    .error log enrichment to easier maintenance in production environment
+    .sharedcache optimizations to improve multithreaded access performance
+    
+GreasySpoon v0.5.5
+---------------------------------------------------
+Bug fix:
+    .Fix @ordering tag
+    .Fix log display under Linux (\r\n vs \n)
+    
+GreasySpoon v0.5.4
+---------------------------------------------------
+Bug fix:
+    .ICAP bug with large preview
+    .several issues with compression
+    .REQMOD issues with POST requests
+Enhancements:
+    .Add Deflate compression support
+    .Improve processing for scripts modifying only HTTP header
+    .Extends @include and @exclude regexes to complete URL (now take URL parameters into account)
+    .Highly optimize performances of log tailing in administration interface
+
+
+GreasySpoon v0.5.3
+---------------------------------------------------
+Bug fix:
+    .Fix ICAP bug in reqmod with Squid 3.0 (204 response)
+    .Fix level 2 Mimemagic rules
+Enhancements:
+    .Add optional @responsecode tag for scripts in respmod allowing to proceed other responses than 200 OK
+
+
+GreasySpoon v0.5.2
+---------------------------------------------------
+Bug fix:
+    .Prevents infinite loop if ICAP client closes connection during preview
+    .Fix configuration parsing bug
+
+Enhancements:
+    .Improved encoding detection
+    .MimeMagic support added
+
+
+GreasySpoon v0.5.1
+---------------------------------------------------
+Bug fix:
+    .Fix html encoding issues
+
+Enhancements:
+    .Code cleanup 
+    .Bug prevention enforcement (log level setting, invalid regexes,...)
+    .Full support of preview added. 
+    .Simultaneous ICAP clients brands support added through ICAP uri parameters
+    .Fusion between REQMOD and RESPMOD services: services can now run in both modes simultaneously
+    .Added timeout parameter for scripts
+    .Overall cleanup: each service can have its own ICAP parameters
+    .Multiple services support.
+    

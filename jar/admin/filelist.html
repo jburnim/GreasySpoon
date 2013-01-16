@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>Versions</title>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+  <link type="text/css" rel="stylesheet" href="/css/smoothness/jquery-ui-1.7.1.custom.css" />
+  <script language="javascript" type="text/javascript" src="/libs/jquery-1.3.2.min.js"></script>  
+  <script language="javascript" type="text/javascript" src="/libs/jquery-ui-1.7.2.custom.min.js"></script>
+   <script type="text/javascript">
+            $(function(){
+                // Delete  Dialog    
+                $('#delete_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert',
+                    buttons: {
+                        "Delete": function() {
+                            document.forms['actionForm'].operation.value = 'delete';
+                            document.forms['actionForm'].submit();
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+            });
+            
+            function OnSubmitForm(){
+                    if (document.pressed == 'delete') {
+                            $('#delete_dialog').dialog('open');
+                            return false;
+                    } else {
+                        document.forms['actionForm'].operation.value = document.pressed;
+                        return true;
+                    }
+            }
+    </script>
+</head>
+<body>
+<div style="display:none;">
+    <div id="delete_dialog" title="Delete File ?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Files will be permanently deleted and cannot be recovered. Continue anyway ?</p>
+    </div>
+</div>
+
+<div id="properties">
+    <div class="section">Server configuration files</div>
+    <br />
+    <span class="error"><!-- error --></span>
+    <span class="comment"><!-- comment --></span>
+    
+    <!--restartcmd--> 
+    <form id="actionForm" name="files" method="GET" action="filelist.html" charset="UTF-8" onSubmit="return OnSubmitForm();">
+        <div id="config" width="400px">
+            <select class="item" name="file" size="18">
+                <!--filelist-->
+            </select>
+        </div>
+       
+        <br />
+        <br />
+        <br />
+        <input type="hidden" name="operation" value="">
+        <div class="buttongroup">
+          <input name="op_button" value="edit" type="submit" onClick="document.pressed=this.value" class="button">&nbsp;&nbsp;
+          <input name="op_button" value="download" type="submit" onClick="document.pressed=this.value" class="button">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input name="op_button" value="delete" type="submit" onClick="document.pressed=this.value" class="button">
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

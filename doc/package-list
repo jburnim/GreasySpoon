@@ -1,0 +1,12 @@
+icap
+icap.core
+icap.services
+icap.services.resources.gs
+org.json
+tools.general
+tools.httpserver
+tools.httpserver.custom
+tools.logger
+tools.logger.syslog
+tools.monitor
+tools.sec

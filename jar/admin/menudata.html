@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+    <!--[if gte IE 5]>
+	<style>#treeMenuItem div a {width: 100%;}</style>
+  <![endif]-->
+  <script type="text/javascript" src="/libs/treemenu.js"></script>
+</head>
+
+<body onload="window.parent.frames['topmenu'].select('data');window.parent.frames['main'].location.href = 'overview.html';">
+<div id="Layer1" style="position:absolute; width:95%; z-index:1; left: 5px; top: 5px;">
+	<div id="treeMenuControl">
+		<p><a href="#" onClick="TreeMenu_collapse(0);return false">Expand All</a> | <a href="#" onClick="TreeMenu_collapse(1);return false">Collapse All</a></p>
+	</div>
+	<div id="treeMenuItem">
+   		<div><a href="#" onClick="TreeMenu_select(this);return false">System Status</a>
+			<div><a href ="overview.html" target ="main" class="treecurrentmark">General</a></div>
+            <div><a href ="statusdaily.html" target ="main">Daily stats</a></div>
+            <div><a href ="statusweekly.html" target ="main">Week stats</a></div>
+            <div><a href ="statusmonthly.html" target ="main">Month stats</a></div>
+            <div><a href ="statusyearly.html" target ="main">Year stats</a></div>
+		</div>
+		<div><a href="#" onClick="TreeMenu_select(this);return false">Logs</a>
+            <!--accesslog-->
+            <!--errorlog-->
+            <!--servicelog-->
+            <!--adminlog-->
+            <!--debuglog-->
+            <!--
+            <div id="accesslog"><a href ="showlog.html?access.log" target ="main">Access</a></div>
+            <div id="errorlog"><a href ="showlog.html?error.log" target ="main">Error</a></div>
+            <div id="servicelog"><a href ="showlog.html?service.log" target ="main">Service</a></div>
+            <div id="adminlog"><a href ="showlog.html?admin.log" target ="main">Admin</a></div>
+            <div id="debuglog"><a href ="showlog.html?debug.log" target ="main">Debug</a></div>
+            -->
+        </div>
+	</div>
+	</div>
+</div>
+<script type="text/javascript">TreeMenu_create();TreeMenu_init();</script>
+</body>
+</html>

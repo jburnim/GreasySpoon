@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <meta http-equiv="X-UA-Compatible" content="IE=7" />
+
+  <title>Edit file</title>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle" type="text/css" />
+  <link href="css/smoothness/jquery-ui-1.7.1.custom.css" rel="stylesheet" type="text/css" />
+  <script language="javascript" type="text/javascript" src="/libs/jquery-1.3.2.min.js"></script>  
+  <script language="javascript" type="text/javascript" src="/libs/jquery-ui-1.7.2.custom.min.js"></script>
+  <script language="javascript" type="text/javascript" src="/libs/greasyspoon.js"></script>
+    
+  <!-- START_EDITOR_ENABLED -->
+  <script language="javascript" type="text/javascript" src="/libs/edit_area/edit_area_full.custom.js"></script>
+  <script language="Javascript" type="text/javascript">
+		// initialisation
+        jQuery.noConflict();
+
+		editAreaLoader.init({
+			id: "coloredtextarea"	// id of the textarea to transform		
+            ,font_size: "8"
+			,font_family: "monospace"
+			,allow_resize: "both"
+			,allow_toggle: false
+			,language: "en"
+            ,min_height: "400"
+            <!--editoroptions--> 
+            ,toolbar: "save, |, autocompletion, |, fullscreen, | , charmap, |, search, go_to_line, |, undo, redo, |, select_font, |, syntax_selection,|, change_smooth_selection, highlight, reset_highlight, |, word_wrap, |, greasyspoonea"
+            ,syntax_selection_allow: "css,html,js,ruby,php,python,xml,java"
+            ,save_callback: "my_save"
+			,charmap_default: "arrows"
+            ,cursor_position: "begin"
+            ,plugins: "greasyspoonea,charmap, autocompletion"
+		});
+		
+		// callback functions
+		function my_save(id, content){
+			//alert("Here is the content of the EditArea '"+ id +"' as received by the save callback function:\n"+content);
+            updatecontent();
+            saveFunction();
+		}
+        function updatecontent(){
+            document.forms['fileform'].content.value = editAreaLoader.getValue("coloredtextarea");
+        }
+	</script>
+  <!-- END_EDITOR_ENABLED -->
+
+  <!-- START_EDITOR_DISABLED -->
+    <script language="Javascript" type="text/javascript">
+        function updatecontent(){
+        }
+        function init_keyhandler(id) {
+          document.onkeydown = keyHandler;
+          document.onkeypress = keyHandler;
+          document.onkeyup = keyHandler;
+        }
+        init_keyhandler();
+    </script>
+    <!-- END_EDITOR_DISABLED -->    
+   </head>
+<body>
+<div id="showhelp" class="comment" Title="Help" style="display:none;">
+<b><u>Shortcuts</b></u><br />
+<ul>
+<li>Tab: add tabulation to text<br /></li>
+<li>Shift+Tab: remove tabulation to text<br /></li>
+<li>Ctrl+s: save<br /></li>
+<li>Ctrl+f: search next / open search area<br /></li>
+<li>Ctrl+r: replace / open search area<br /></li>
+<li>Ctrl+h: toggle syntax highlight on/off<br /></li>
+<li>Ctrl+g: go to line<br /></li>
+<li>Ctrl+z: undo<br /></li>
+<li>Ctrl+y: redo<br /></li>
+<li>Ctrl+e: about<br /></li>
+<li>Ctrl+q, Esc: close popup<br /></li>
+<li>Accesskey E: Toggle editor<br /></li>
+</ul>
+<i>Editarea 0.8.1.1</i>
+</div>
+<div id="properties">
+    <div class="toggler">
+        <div id="effect">
+            <p>
+                <span id="errorcontent" class="error"><!-- error --></span>
+                <span id="commentcontent" class="comment"><!-- comment --></span>
+            </p>
+        </div>
+    </div>
+    <div class="section">%name%</div> 
+
+    <div id="editor">
+    <form name="fileform" method="POST" action="editfile.html" charset="UTF-8" onSubmit="updatecontent()">
+		<input size="0" maxlength="0" name="filename" value="<!--filename-->" type=hidden> 
+		<span class="listing">
+		<textarea id="coloredtextarea" rows="35" name="content"><!--filecontent--></textarea>
+		</span>
+		<br />
+	    <div class="buttongroup">
+          <input name="operation" value="save" type="button" class="button" onClick=javascript:saveFunction()>&nbsp;&nbsp;
+	      <input name="operation" value="cancel" type="reset" class="button" onclick="history.go(-1);return true;">
+	    </div>
+	</form>
+    </div>
+</div>
+</body>
+</html>

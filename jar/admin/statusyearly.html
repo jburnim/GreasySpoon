@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>Yearly Statistics</title></head>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+  <link rel="stylesheet" href="/css/lytebox.css" type="text/css" media="screen" />
+  <script type="text/javascript" language="javascript" src="/libs/lytebox.js"></script>
+<body>
+<div id="properties">
+    <div class="section">Server load</div>
+    <br />
+    <table border="0" align="center">
+        <tr>
+            <td align="center">
+               <a href="/stats/req-yearly.png" rel="lytebox" title="Transaction rate (in r/s)"><img src="/stats/req-yearly.png" width="471px" height="177px" alt="yearly request load"></img></a>
+            </td>
+            <td align="center">
+               <a href="/stats/load-yearly.png" rel="lytebox" title="Server overall memory and processing time load - only on Linux with SUN JVM"><img src="/stats/load-yearly.png" width="471px" height="177px" alt="yearly Server load"></img></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="item" align="center">Server traffic</td>
+            <td class="item" align="center">Server Load</td>
+        </tr>
+    </table>
+    <br />
+
+    <div class="section">JVM Load</div>
+    <br />
+    <table border="0" align="center">
+        <tr>
+            <td align="center">
+                 <a href="/stats/jvm-yearly.png" rel="lytebox" title="JVM memory and processing time load"><img src="/stats/jvm-yearly.png" width="471px" height="177px" alt="yearly JVM usage"></img></a>
+            </td>
+            <td align="center">
+                 <a href="/stats/gc-yearly.png" rel="lytebox" title="Garbage collection calls"><img src="/stats/gc-yearly.png" width="471px" height="177px" alt="yearly GC calls"></img></a>
+            </td>
+        </tr>
+        <tr>
+            <td class="item" align="center">JVM usage</td>
+            <td class="item" align="center">Garbage collection</td>
+        </tr>
+    </table>
+    <br />
+</div>
+</body>
+</html>

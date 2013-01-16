@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>Editor</title>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+    <script type="text/JavaScript">
+        <!--   // Check user key entry and accept entry only if it is numeric
+        function check_numeric(event){
+                if (event.keyCode > 57 || event.keyCode == 42 || event.keyCode == 47 || (event.keyCode > 43 && event.keyCode < 46) || (event.keyCode > 32 && event.keyCode < 40)) event.returnValue = false;
+                if (event.which > 57 || event.which == 42 || event.which == 47 || (event.which > 43 && event.which < 46) || (event.which > 32 && event.which < 40)) return false;
+                return true;
+            }
+        function turnOptionsState(state){
+                document.getElementById('autocomplete_on').disabled = !state;
+                document.getElementById('start_highlight').disabled = !state;
+                document.getElementById('word_wrap').disabled = !state;
+                document.getElementById('replace_tab_by_spaces').disabled = !state;
+        }    
+        // End hided --> 
+    </script>
+</head>
+
+<body onLoad="turnOptionsState(document.getElementById('editor_on').checked);">
+
+<br />
+<span class="error"><!-- error --></span>
+<span class="comment"><!-- comment --></span>
+<form method="post" action="/editor.html" charset="UTF-8">
+<div id="config">
+        <div class=section>
+        	Editor parameters
+        </div>
+       <br />    
+
+	   <br />
+       <div class=item>
+  	    <LABEL FOR="editor_on">
+           <INPUT NAME="editor.editor_on" TYPE=CHECKBOX onchange='turnOptionsState(this.checked);' ID="editor_on" %editor_on%>
+           Enable real-time syntax highlight
+       </LABEL>
+      </div>
+
+      <br />
+       <div class=item>
+  	    <LABEL FOR="autocomplete_on">
+           <INPUT NAME="editor.autocomplete_on" TYPE=CHECKBOX ID="autocomplete_on" %autocomplete_on%>
+            Enable autocomplete and method suggestion
+       </LABEL>
+      </div>
+
+      <br />
+       <div class=item>
+  	    <LABEL FOR="start_highlight">
+           <INPUT NAME="editor.start_highlight" TYPE=CHECKBOX ID="start_highlight" %start_highlight%>
+           Start editor with highlighted syntax displayed
+       </LABEL>
+      </div>
+
+      <br />
+       <div class=item>
+  	    <LABEL FOR="word_wrap">
+           <INPUT NAME="editor.word_wrap" TYPE=CHECKBOX ID="word_wrap" %word_wrap%>
+           Automatically wrap text to the next line when it reach the end of a line           
+       </LABEL>
+      </div>
+
+      
+      <br />
+       <div class=item>
+  	    <LABEL FOR="replace_tab_by_spaces">
+           <INPUT NAME="editor.replace_tab_by_spaces" TYPE=CHECKBOX ID="replace_tab_by_spaces" %replace_tab_by_spaces%>
+           Replace tabulations (\t) by spaces in text.
+       </LABEL>
+      </div>
+      
+</div>
+
+    <br /><br />
+    <div class="buttongroup">
+      <input name="Submit" value="Apply" type="submit" onClick="this.value='updating...'" class="button">
+      &nbsp;&nbsp;&nbsp; 
+      <input name="Reset" value="Cancel" type="reset" class="button">
+    </div>
+</form>
+</body>
+</html>

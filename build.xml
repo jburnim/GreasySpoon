@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- simple Ant build script -->
+
+<project name="GreasySpoon" default="default" basedir=".">
+
+	<!-- =============================================== -->
+    <!-- define properties -->
+	<!-- =============================================== -->
+	<property name="jdk.home" value="${java.home}"/>
+    <property name="version.number" value="1.0.8"/>
+    <property name="src.dir" value="src" />
+    <property name="class.dir" value="bin" />
+    <property name="jar.dir" value="jar" />
+    <property name="tmp.dir" value="tmp" />
+	<property name="build.dir" value="build" />
+  	<tstamp>
+	    <format property="TODAY_B" pattern="-d-MMMM-yyyy-hh-mm" />
+	</tstamp>
+	
+	<!-- =============================================== -->
+    <!-- Clean up files to add -->
+	<!-- =============================================== -->
+	<defaultexcludes default="true"/>
+	<!-- skip hidden files and directories -->
+	<defaultexcludes add="**/.*"/>
+	<defaultexcludes add="**/.*/**"/>
+	<!-- skip logs, backups and stats -->
+	<defaultexcludes add="**/*.log"/>
+	<defaultexcludes add="**/admin/backup/*.*"/>
+	<defaultexcludes add="**/admin/stats/*.*"/>
+	<defaultexcludes echo="true"/>
+	
+	
+	<path id="compile.classpath">
+		<fileset dir="lib">
+			<include name="*.jar"/>
+		</fileset>
+    </path>
+	<!-- =============================================== -->
+	
+
+	<!-- =============================================== -->
+    <!-- default target when you just type "ant" -->
+	<!-- =============================================== -->
+    <target name="default" depends="compile,single-jar,combined-jar,copylibs">
+    </target>
+	<!-- =============================================== -->
+	
+	
+	<!-- =============================================== -->
+    <!-- compile the java code -->
+	<!-- =============================================== -->
+    <target name="compile">
+		<echo>Compiling...</echo>
+		<mkdir dir="${class.dir}"/>
+    	<echo message="JDK home: ${jdk.home}" />
+		<javac fork="true" executable="javac" srcdir="${src.dir}" destdir="${class.dir}" nowarn="true" debug="true">
+		    <classpath refid="compile.classpath"/>
+		</javac>
+    </target>
+	<!-- =============================================== -->
+    
+	
+	<!-- =============================================== -->
+    <!-- make a single jar that just contains the greasyspoon code -->
+	<!-- =============================================== -->
+    <target name="single-jar" depends="copylibs">
+    	<echo>Building simple jar with external dependencies...</echo>
+		<jar destfile="${jar.dir}/greasyspoon-nodeps.jar" basedir="${class.dir}" excludes="**/\.*"/>
+    </target>
+	<!-- =============================================== -->
+    
+
+	<!-- =============================================== -->
+    <!-- copy dependencies to appropriate place under "build" dir -->
+	<!-- =============================================== -->
+    <target name="copylibs">
+		<mkdir dir="${jar.dir}/lib"/>
+		<copy todir="${jar.dir}/lib">
+	    	<fileset dir="lib" includes="**/*.jar"/>
+		</copy>
+    </target>
+	<!-- =============================================== -->
+    
+	
+	<!-- =============================================== -->
+    <!-- make a combined jar (the "fat jar") that has greasyspoon plus dependencies -->
+	<!-- =============================================== -->
+    <target name="combined-jar">
+    	<echo>Building fat jar without external dependencies...</echo>
+		<!-- nuke any previous temp files -->
+		<delete dir="${tmp.dir}/depjar"/>
+		<mkdir dir="${tmp.dir}"/>
+		<mkdir dir="${tmp.dir}/depjar"/>
+		<unjar dest="${tmp.dir}/depjar">
+		    <fileset dir="lib">
+		    <exclude name="**/tools.jar" />
+			<include name="**/*.jar"/>
+		    </fileset>
+		</unjar>
+		<copy todir="${tmp.dir}/depjar">
+		    <fileset dir="${class.dir}" excludes="**/\.*"/>
+		</copy>
+    	<delete dir="${tmp.dir}/depjar/META-INF"/>
+		<jar destfile="${jar.dir}/greasyspoon.jar" basedir="${tmp.dir}/depjar">
+		    <manifest>
+				<attribute name="Main-Class" value="icap.IcapServer"/>
+	    	      <section name="common">
+	    	        <attribute name="Specification-Title" value="GreasySpoon" />
+	    	        <attribute name="Specification-Version" value="${version.number}" />
+	    	        <attribute name="Specification-Vendor" value="Karel MITTIG" />
+	    	        <attribute name="Implementation-Title" value="GreasySpoon" />
+	    	        <attribute name="Implementation-Version" value="${version.number} ${TODAY_B}" />
+	    	        <attribute name="Implementation-Vendor" value="Karel MITTIG" />
+	    	      </section>
+    	      <!-- finally, use the libs path -->
+    	      <attribute name="Class-Path" value=". ./pkg/ext/tools.jar ./pkg/ext/jruby.jar ./pkg/ext/jruby-engine.jar ./pkg/ext/jython.jar" />
+		    </manifest>
+		</jar>
+		<delete dir="${tmp.dir}"/>
+    </target>
+	<!-- =============================================== -->
+	
+	
+	<!-- =============================================== -->
+    <!-- clean up -->
+	<!-- =============================================== -->
+    <target name="clean">
+    	<echo>Cleaning...</echo>
+		<!-- delete dir="bin"/ -->
+		<delete dir="${tmp.dir}"/>
+	    <delete dir="${build.dir}"/>
+    	<delete dir="${class.dir}"/>
+    	<delete file="${jar.dir}/conf/certificate.ssl"/>
+    	<delete file="${jar.dir}/admin/stats/*.*"/>
+    	<delete file="${jar.dir}/log/*.*"/>
+    </target>
+	<!-- =============================================== -->
+	
+	
+
+	
+	<!-- =============================================== -->
+    <!-- build source package -->
+	<!-- =============================================== -->
+    <target name="srcpkg">
+    	<echo>Building source package...</echo>
+    	<mkdir dir="${build.dir}"/>
+    	<tar destfile="${build.dir}/greasyspoon-release-${version.number}-sources.tar.gz" compression="gzip" longfile="gnu">
+			<tarfileset dir="." prefix="greasyspoon-release-${version.number}-sources" username="greasyspoon" group="greasyspoon">
+				<exclude name="**/*.log greasyspoon-*.zip" />
+				<exclude name="greasyspoon-*.tar.gz tmp build packaging/nsis/*.exe"/>
+    			<exclude name="**/greasyspoon"/>
+				<exclude name="${jar.dir}/lib/*.*"/>
+				<exclude name="**/*.gsx"/>
+    			<exclude name="packaging/sys/commons-daemon-1.0.1/bin/src/config.status"/>
+    			<exclude name="packaging/sys/commons-daemon-1.0.1/bin/src/support/config.guess"/>
+    			<exclude name="packaging/sys/commons-daemon-1.0.1/bin/src/configure"/>
+				<exclude name="**/serverscripts/*.server.*"/>
+			</tarfileset>
+	  		<tarfileset dir="${jar.dir}" prefix="greasyspoon-release-${version.number}-sources/${jar.dir}" username="greasyspoon" group="greasyspoon">
+	  			<include name="serverscripts/demo*.*"/>
+	  		</tarfileset>
+    		<tarfileset dir="." prefix="greasyspoon-release-${version.number}-sources" filemode="755" username="greasyspoon" group="greasyspoon">
+    			<include name="**/greasyspoon"/>
+    		</tarfileset>
+		</tar>
+    </target>
+	
+	
+	
+	<!-- =============================================== -->
+	<!-- create binary distribution packages -->
+	<!-- =============================================== -->
+    <target name="build" depends="clean,compile,combined-jar,srcpkg">
+    	<!-- binary build -->
+    	<mkdir dir="${build.dir}"/>
+		
+    	<!-- make a tar/gz -->
+    	<echo>Building tar/gz package...</echo>
+		<tar destfile="${build.dir}/greasyspoon-release-${version.number}.tar.gz" compression="gzip">
+	  		<tarfileset dir="${jar.dir}" prefix="greasyspoon-release-${version.number}" username="greasyspoon" group="greasyspoon">
+	  			<exclude name="**/*.log"/>
+	  			<exclude name="**/greasyspoon-nodeps.jar"/>
+	  			<exclude name="lib/*.*"/>
+	  			<exclude name="**/*.gsx"/>
+	  			<exclude name="**/greasyspoon"/>
+	  			<exclude name="serverscripts/*.server.*"/>
+	  		</tarfileset>
+	  		<tarfileset dir="${jar.dir}" prefix="greasyspoon-release-${version.number}" username="greasyspoon" group="greasyspoon">
+	  			<include name="serverscripts/demo*.*"/>
+	  			<include name="../*.txt"/>
+	  		</tarfileset>
+    		<tarfileset dir="${jar.dir}" prefix="greasyspoon-release-${version.number}" filemode="755" username="greasyspoon" group="greasyspoon">
+    			<include name="**/greasyspoon"/>
+    		</tarfileset>
+		</tar>
+    </target>
+	<!-- =============================================== -->
+
+</project>

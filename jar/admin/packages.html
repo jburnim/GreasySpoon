@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <meta content="IE=EmulateIE7"  http-equiv="X-UA-Compatible">
+  <title>Language Packs for GreasySpon</title>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+  <link href="css/smoothness/jquery-ui-1.7.1.custom.css" rel="stylesheet" type="text/css" />
+  <script language="javascript" type="text/javascript" src="/libs/jquery-1.3.2.min.js"></script>  
+  <script language="javascript" type="text/javascript" src="/libs/jquery-ui-1.7.2.custom.min.js"></script>
+  <script language="javascript" type="text/javascript" src="/libs/greasyspoon.js"></script>
+  <script language="javascript" type="text/javascript" src="/libs/jquery.simpletooltip-min.js"></script>
+  <script type="text/javascript"  charset="utf-8">
+    $(function(){
+            // Delete  Dialog    
+        $('#waiting_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert', draggable: false});
+        // Delete  Dialog    
+        $('#delete_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert',
+            buttons: {
+                "Delete": function() {
+                    document.forms['filesmanagement'].operation.value = 'delete';
+                    $(this).dialog("close");
+                    document.forms['filesmanagement'].submit();
+                    Show_Popup();
+                },
+                "Cancel": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        // Install/Uninstall Dialogs
+        $('#install_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert',
+            buttons: {
+                "Install": function() {
+                    document.forms['filesmanagement'].operation.value = 'install';
+                    $(this).dialog("close");
+                    Show_Popup();
+                    document.forms['filesmanagement'].submit();
+                },
+                "Cancel": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        $('#uninstall_dialog').dialog({ autoOpen: false, width: 400, modal: true, resizable: false, dialogClass: 'alert',
+            buttons: {
+                "Uninstall": function() {
+                    document.forms['filesmanagement'].operation.value = 'uninstall';
+                    $(this).dialog("close");
+                    Show_Popup();
+                    document.forms['filesmanagement'].submit();
+                },
+                "Cancel": function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+    });
+    
+    $(function(){
+        $(".pkg").simpletooltip({
+            customTooltip: function(target){
+                var title=$(target).attr("details");
+                return '<p style="width:400px;height:150px;margin:0;padding:10px;background:#fff;border:1px solid #000;font-size:10px;">'+ title +'</p>';
+            },
+            showEffect: "fadeIn",
+            hideEffect: "fadeOut",
+            click: true
+        });
+    });
+    
+    function OnSubmitForm(){
+            if (document.pressed == 'install') {
+                    $('#install_dialog').dialog('open');
+                    return false;
+            } else if (document.pressed == 'delete') {
+                    $('#delete_dialog').dialog('open');
+                    return false;
+            } else if (document.pressed == 'uninstall') {
+                    $('#uninstall_dialog').dialog('open');
+                    return false;
+            }
+            return false;
+    }
+    function switchButtons(installed){
+        if (installed==true){
+                document.forms['filesmanagement'].availablepackages.selectedIndex=-1;
+                document.forms['filesmanagement'].op_button1.disabled=true;
+                document.forms['filesmanagement'].op_button2.disabled=true;
+                document.forms['filesmanagement'].op_button3.disabled=false;
+            } else {
+                document.forms['filesmanagement'].installedpackages.selectedIndex=-1;
+                document.forms['filesmanagement'].op_button1.disabled=false;
+                document.forms['filesmanagement'].op_button2.disabled=false;
+                document.forms['filesmanagement'].op_button3.disabled=true;
+            }
+    }
+    function Show_Popup() {
+        $('#fade').fadeIn('fast');
+        $('#window').fadeIn('fast');
+    }
+</script>
+<style>
+#fade {
+    height: 100%;
+    width: 100%;
+    background: #AAAAAA;
+    position: absolute;
+    top: 0;
+    -moz-opacity:0.3;
+    -khtml-opacity: 0.3;
+    opacity: 0.25;
+    filter:alpha(opacity=30);
+}
+
+#window {
+    width: 400px;
+    height: 200px;
+    margin: 0 auto;
+    border: 1px solid #AAAAAA;
+    background: #ffffff;
+    position: absolute;
+    top: 200px;
+    left: 25%;
+}
+</style>
+</head>
+
+<body>
+<div style="display:none;">
+    <div id="delete_dialog" title="Delete Package ?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Selected Package will be permanently deleted and cannot be recovered. Proceed anyway ?</p>
+    </div>
+    <div id="uninstall_dialog" title="Remove Language package ?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 40px 0;"></span>Full package removal will require to manually delete some files and to restart GreasySpoon to complete. Note also that scripts already developped will this language will not work anymore.<br />Proceed anyway ?</p>
+    </div>
+    <div id="install_dialog" title="Install Language package ?">
+        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>Package installation will require to manually restart GreasySpoon to complete. Continue with installation ?</p>
+    </div>
+        <div id="waiting_dialog" title="">
+        <p><img src="/img/wait.gif" /></p>
+    </div>
+</div>
+
+<div id="fade" style="display: none;"></div>
+<div id="window" style="display: none;">
+    <div id="popup_content"><center><img height="170px" src="/img/wait.gif" /><br />Operation in progress...Please wait...</center></div>
+</div>
+<div id="properties">
+<div class='error'>Warning: These functions require GreasySpon to run with <b>admin (root) privileges</b> and there are <u>known</u> limitations regarding packages installation/removal.<br />Please consider using the shell command <b><i>greasyspoon -e</b></i> (unix) or <b><i>greasyspoon.bat</b></i> (windows) instead.<br /></div>
+    <span id="errorcontent" class="error"><!-- error --></span>
+    <span id="commentcontent" class="comment"><!-- comment --></span>
+    <br />
+    <div class="section">GreasySpoon Language Packages</div>
+    <!-- UPLOAD form -->
+    <form action="packages.html" enctype="multipart/form-data" method="post">
+        <div class=item title="Upload configuration backup">
+        Upload language package: 
+            <input type="file" name="datafile" size="40" class="button">
+            <input name="operation" value="upload" type="submit" class="button">
+        </div>
+    </form>
+    <br />
+
+    <!-- Packages management form -->
+    <form id="filesmanagement" name="filesmanagement" method="GET" action="packages.html" charset="UTF-8" onSubmit="return OnSubmitForm();">
+        <table>
+            <tr>
+                <td width="40%" class='item' text='center'><center>Available Packages</center></td>
+                <td width="20%"></td>
+                <td width="40%" class='item'><center>Installed Packages</center></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class=item title="Available packages"></div>
+                    <div id="section" title="Available packages" align="center">
+                        <select id="availablepackages" class="item" name="packagename" style="min-width:300;padding:2px 20px 2px 5px;" size="10"  onClick="switchButtons(false);">
+                            <!--availablepackages-->
+                        </select>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                    <div id="section" title="Installed packages" align="center">
+                        <select id="installedpackages" class="item" name="packagename" style="min-width:300;padding:2px 20px 2px 5px;" size="10" onClick="switchButtons(true);">
+                            <!--installedpackages-->
+                        </select>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+            <td>
+             <div class="buttongroup">
+                  <input title="Install selected package" name="op_button1" value="install" onClick="document.pressed=this.value" type="submit" class="button" />
+                  <input title="Delete selected package" name="op_button2" value="delete" onClick="document.pressed=this.value" type="submit" class="button" />
+            </div>
+            </td>
+            <td></td>
+            <td> 
+                <div class="buttongroup">
+                <input title="Uninstall selected package" name="op_button3" value="uninstall" onClick="document.pressed=this.value" type="submit" class="button" />
+                </div>
+            </td>
+            </tr>
+        </table>
+        <br />
+        <input type="hidden" name="operation" value="" />
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+    <!--[if gte IE 5]>
+	<style>#treeMenuItem div a {width: 100%;}</style>
+  <![endif]-->
+  <script type="text/javascript" src="/libs/treemenu.js"></script>
+</head>
+
+<body onload="window.parent.frames['topmenu'].select('maintenance');window.parent.frames['main'].location.href = 'versions.html';">
+<div id="Layer1" style="position:absolute; width:95%; z-index:1; left: 5px; top: 5px;">
+	<div id="treeMenuControl">
+		<p><a href="#" onClick="TreeMenu_collapse(0);return false">Expand All</a> | <a href="#" onClick="TreeMenu_collapse(1);return false">Collapse All</a></p>
+	</div>
+	<div id="treeMenuItem">
+		<div><a href="#" onClick="TreeMenu_select(this);return false">General</a>
+			<div><a href ="versions.html" target ="main" class="treecurrentmark">Versions</a></div>
+		</div>
+        <div><a href="#" onClick="TreeMenu_select(this);return false">Server Setup</a>
+		   <div><a href ="filelist.html" target ="main">Configuration files</a></div>
+           <div><a href ="maintenance.html" target ="main">Backups</a></div>
+        </div>
+        <div><a href="#" onClick="TreeMenu_select(this);return false">Logging</a>
+           <div><a href ="datalog.html" target ="main">Log files</a></div>
+		   <div><a href="conflog.html" target ="main">Log parameters</a></div>
+        </div>
+		<div><a href="#" onClick="TreeMenu_select(this);return false">Authentication</a>
+			<div><a href ="admin.html" target ="main">Administration</a></div>
+			<div><a href="confusers.html" target ="main">Accounts</a></div>
+		</div>
+		<div><a href="#" onClick="TreeMenu_select(this);return false">Scripting</a>
+            <div><!--packages.html--></div>
+			<div><a href ="editor.html" target ="main">Editor Interface</a></div>
+            <div><a href ="analyser.html" target ="main">Code analyser</a></div>
+		</div>        
+	</div>
+	</div>
+</div>
+<script type="text/javascript">TreeMenu_create();TreeMenu_init();</script>
+</body>
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>Versions</title></head>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+<body>
+
+<SCRIPT type="text/JavaScript">
+<!--   
+var ns4 = (document.layers)? true:false;         //NS 4
+var ie4 = (document.all)? true:false;         //IE 4
+var dom = (document.getElementById)? true:false;   //NS 6 ou IE 5
+
+function addUser(){
+    var tbl = document.getElementById('aliases');
+    var lastRow = tbl.rows.length;
+    // if there's no header row in the table, then iteration = lastRow + 1
+    var iteration = lastRow;
+    var row = tbl.insertRow(lastRow);
+    var cell = row.insertCell(0);
+    var el = document.createElement('input');
+    el.type = 'checkbox';
+    el.name = 'del';
+    el.value=''+ iteration;
+    cell.appendChild(el);
+    cell = row.insertCell(1);
+    el = document.createElement('input');
+    el.type = 'text';
+    el.name = 'login_' + iteration;
+    el.size = 25;
+    el.maxlength = 25;
+    cell.appendChild(el);
+    
+    cell = row.insertCell(2);
+    el = document.createElement('input');
+    el.type = 'password';
+    el.name = 'pwd_' + iteration;
+    el.size = 25;
+    cell.appendChild(el);
+	
+	cell = row.insertCell(3);
+    el = document.createElement('select');
+    el.name = 'type_' + iteration;
+	el.options[0] = new Option('USER', 'USER');
+    el.options[1] = new Option('ADMIN', 'ADMIN');
+	el.options[2] = new Option('NONE', 'NONE');
+    cell.appendChild(el);
+	
+  }
+
+//Check user key entry and accept entry only if it is numeric
+function check_numeric(event)
+	{
+		if (event.keyCode > 57 || event.keyCode == 42 || event.keyCode == 47 || (event.keyCode > 43 && event.keyCode < 46) || (event.keyCode > 32 && event.keyCode < 40)) event.returnValue = false;
+           	if (event.which > 57 || event.which == 42 || event.which == 47 || (event.which > 43 && event.which < 46) || (event.which > 32 && event.which < 40)) return false;
+		return true;
+	}
+//-->  // Fin de la partie cachée
+</SCRIPT>
+<br>
+<span class="error"><!-- error --></span>
+<span class="comment"><!-- comment --></span>
+<form method="post" action="/confusers.html" charset="UTF-8">
+    <div id="config">
+		<br><br><br>
+		<div class=confcat>
+        	Users Account management <input name="add" value="add user" type="button" onClick="addUser();" class="button">
+        </div>
+        <br />
+		<div class=users>
+		   <table border="0" cellspacing="1">
+			    <tbody ID="aliases">
+			     <tr class="tablehead"> 
+			        <th>del</th>
+			        <th>login</th>
+			        <th>password</th>
+					<th>type</th>
+			     </tr>
+			    <!-- users -->
+			   </tbody>
+		  </table>
+		</div>
+		<br>
+     </div>
+
+    <br><br>
+    <div class="buttongroup">
+      <input name="Submit" value="Apply" type="submit" onClick="this.value='updating...'" class="button">
+      &nbsp;&nbsp;&nbsp; 
+      <input name="Reset" value="Cancel" type="reset" class="button">
+    </div>
+</form>
+</body>
+</html>

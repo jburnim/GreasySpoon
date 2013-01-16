@@ -1,0 +1,237 @@
+################################################
+#!/bin/sh
+################################################
+# greasyspoon   Greasyspoon control script
+#
+# chkconfig: 2345 80 30
+# description: Greasyspoon is a Java-based scriptable ICAP server \
+#              that allows one to modify HTTP content as it \
+#              passes through an HTTP proxy, e.g. squid.
+# processname: greasyspoon
+# config: /etc/greasyspoon/conf/icapserver.conf
+# pidfile: /var/run/greasyspoon.pid
+################################################
+
+###############################################
+# Source greasyspoon configuration.
+# Update variable below with installation paths
+
+#-----------------------------------------------
+# JAVA_HOME: absolute path of the JRE / JDK to use
+JAVA_HOME=/usr/lib/jvm/java-6-sun/
+#-----------------------------------------------
+
+#-----------------------------------------------
+# GS_HOME: GreasySpoon installed directory
+#GS_HOME=/home/greasyspoon
+GS_HOME=`dirname $0 | xargs readlink -e`
+#-----------------------------------------------
+
+#-----------------------------------------------
+# GS_OPTIONS: custom options for the jvm
+GS_OPTIONS="-Xms256m -Xmx256m -Djava.awt.headless=true -Djava.net.preferIPv4Stack=true"
+#-----------------------------------------------
+
+#-----------------------------------------------
+# pidpath: path where to store process pid. /var/run by default, but implies to be started as root
+#pidpath=/var/run/
+pidpath=/tmp/
+#-----------------------------------------------
+
+#-----------------------------------------------
+#GS_USER: gs process owner when started using daemon mode (disabled by default).
+#Implies to start/stop gs with root privileges
+#GS_USER=daemon
+#-----------------------------------------------
+
+
+# End of greasyspoon configuration
+###############################################
+
+
+###############################################
+# lines below should not be modified 
+###############################################
+
+################################################
+# ensure JAVA_HOME is set properly - this is important
+GS_CLASSPATH="$GS_HOME/greasyspoon.jar"
+export JAVA_HOME="$JAVA_HOME" 
+################################################
+
+
+##############################################
+classname=greasyspoon
+ext=.jar
+currentpath=`pwd` #record current path to restore after script execution
+# generate pid based on instance path (allows multiple instances) - replace / with a _
+pid=.${classname}${GS_HOME}.pid
+pid=$(echo $pid|sed 's!/!_!g')
+##############################################
+
+# must be launched from the appropriate dir
+cd $GS_HOME
+
+##############################################
+# Daemon mode: try to detect arch and use
+# native daemon facility if available
+daemon="false"
+
+
+##############################################
+#////////////////////////////////////////////
+start() {
+    echo -n "Starting greasyspoon..."
+    # don't need to check if already running, that is done by caller. Just launch it
+    $JAVA_HOME/bin/java -server $GS_OPTIONS -jar ${classname}${ext} $* & echo $! > ${pidpath}${pid}
+    RETVAL=$?
+    if [ "$RETVAL" == "0" ]; then 
+        echo "server started."
+    else 
+        echo "...aborted."
+    fi
+    return $RETVAL;
+}
+#////////////////////////////////////////////
+
+#////////////////////////////////////////////
+stop() {
+    echo -n "Stopping greasyspoon..."
+    kill -15 `cat ${pidpath}${pid}`
+    rm ${pidpath}${pid}
+    RETVAL=$?
+    if [ "$RETVAL" == "0" ]; then 
+        echo "server stopped."
+    else 
+        echo "...aborted."
+    fi
+    return $RETVAL;
+}
+#////////////////////////////////////////////
+
+#////////////////////////////////////////////
+reload() {
+    echo -n "Reloading greasyspoon..."
+    if [ "$daemon" == "true" ]; then
+        /bin/kill -HUP `cat $pidpath$pid` > /dev/null
+        RETVAL=$?
+        if [ $RETVAL = 0 ]; then 
+            echo "done."
+        else 
+            echo "failed."
+        fi
+        return $RETVAL;
+    else 
+      stop
+      start
+    fi
+}
+#////////////////////////////////////////////
+  
+#////////////////////////////////////////////
+Status() {
+    if [ -e $pidpath$pid ] ; then
+        kill -0 `cat $pidpath$pid` &> /dev/null 
+        RETVAL=$?
+        if [ $RETVAL = 0 ]; then 
+            return "1"
+        else 
+            return "0"
+        fi
+    else
+        return "0"
+    fi
+}
+#////////////////////////////////////////////
+
+#////////////////////////////////////////////
+Usage() {
+ 	echo "Usage: $classname {start|stop|restart|reload|halt|status}"
+    echo "options:"
+    echo "    -h        => this help"
+    echo "    -e list   => list extension packages"
+    echo "    -e {install|uninstall} [Package-ID]   => install/uninstall given package ID"
+  	return 0
+}
+#////////////////////////////////////////////
+##############################################
+
+
+##############################################
+# check status
+Status
+running=$?
+##############################################
+
+##############################################
+# See how we were called.
+case "$1" in
+  #////////////////////////////////////////////
+  start)
+       if [ $running = 0 ]; then 
+        start
+        RETVAL=$?
+       fi
+	;;
+  #////////////////////////////////////////////
+  stop)
+    if [ $running = 1 ]; then 
+        stop
+        RETVAL=$?
+    fi
+	;;
+  #////////////////////////////////////////////
+  halt)
+  	if [ $running = 1 ] ; then
+  		echo -n "Halting $classname..... "
+		kill -9 `cat $pidpath$pid`
+		rm $pidpath$pid
+        echo "done"
+	else
+		echo "$classname not running. exiting..."
+	fi
+	;;
+  #////////////////////////////////////////////
+  restart)
+  	$0 stop
+	$0 start
+	;;
+  #////////////////////////////////////////////
+  reload)
+	if [ $running = 1 ]; then 
+        reload
+        RETVAL=$?
+    fi
+	;;
+  #////////////////////////////////////////////
+   restart|force-reload)
+	stop
+	start
+	RETVAL=$?
+   ;;
+  #////////////////////////////////////////////
+  "-e") 
+  	$JAVA_HOME/bin/java -server -jar $GS_HOME/$classname$ext $*
+	;;
+  #////////////////////////////////////////////
+  status)
+  	if [ $running = 1 ]; 
+      then 
+        echo "$classname is alive."
+      else
+        echo "$classname is halted." 
+    fi
+  ;;
+  #////////////////////////////////////////////
+  "-h"|"--help")
+    Usage
+  ;;
+  #////////////////////////////////////////////
+  *)
+ 	Usage
+  ;;
+  #////////////////////////////////////////////
+esac
+##############################################
+cd $currentpath
+exit $RETVAL

@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+  <title>New Script</title></head>
+  <LINK REL=StyleSheet HREF="/css/admin.css" TITLE="defaultstyle">
+<body>
+
+<SCRIPT type="text/JavaScript">
+<!--   // Check user key entry and accept entry only if it is numeric
+function check_char(event)	{
+	// if aEvent is null, means the Internet Explorer event model,
+	// so get window.event.
+	if (event.keyCode) code = event.keyCode;
+	else if (event.which) code = event.which ;
+
+	if(code >= 48 && code <= 57)  {//numeric
+		return true;
+	}
+	if(code >= 65 && code <= 90){//A-Z
+		return true;
+	}
+	if(code >= 97 && code <= 122) {//A-Z		
+		return true;
+	}
+	if(code == 8 || code == 32 || code == 127 || code == 95 || code == 45){// backspace, space, del, _ , -
+		return true;
+	}
+	return false;
+}
+//-->  // Fin de la partie cachée
+</SCRIPT>
+<br>
+<span class="error"><!-- error --></span>
+<span class="comment"><!-- comment --></span>
+<form method="post" action="/createreqscript.html" charset="UTF-8">
+    <div id="config">
+            <div class=confcat>
+            	Create new Script
+            </div>
+			<br>
+                <div class=item>
+                    <label>Script name</label>
+                    </div>
+                    <div class=item>
+                    <input size="64" maxlength="128" name="script.name" value="" onKeypress="return check_char(event)">
+               </div>
+               <br>
+                 <div class=item title="Script language selection">
+                     Scripting language
+                 </div>
+                <div class=item>
+                    <select class="item" name="script.language">
+                        <!--languagelist-->
+                    </select>
+                </div>
+                <br>
+     </div>
+
+    <br><br>
+    <div class="buttongroup">
+      <input name="Submit" value="Apply" type="submit" onClick="this.value='creating...'" class="button">
+      &nbsp;&nbsp;&nbsp; 
+      <input name="Reset" value="Cancel" type="button" onclick="location.href='/listreqscripts.html'" class="button">
+    </div>
+</form>
+</body>
+</html>

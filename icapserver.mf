@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Specification-Title: "ICAP Server" 
+Specification-Version: "1.0.8"
+Specification-Vendor: "Karel MITTIG".
+Implementation-Title: "GreasySpoon"
+Implementation-Version: "1.0.8-01"
+Implementation-Vendor: "Karel MITTIG"
+Main-Class: icap.IcapServer
+Name: icap.IcapServer.class
+Class-Path: . conf lib pkg/ext/*
