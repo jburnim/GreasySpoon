@@ -83,7 +83,11 @@ editAreaLoader.load_syntax["java"] = {
                         ,['getRequestHeader', 'getRequestHeader({@})', 'getRequestHeader(String headerName)', '(String) return value of request header field, or null if missing']
                         ,['getResponseHeaders', 'getResponseHeaders()', 'getResponseHeaders()', '(String) return raw HTTP response header']
                         ,['getResponseHeader', 'getResponseHeader({@})', 'getResponseHeader(String headerName)', '(String) return value of response header field, or null if missing']
-                        
+
+			    		,['getIcapRequestHeaders', 'getIcapRequestHeaders()', 'getIcapRequestHeaders()', '(String) return raw ICAP request header']
+                        ,['getIcapRequestHeader', 'getIcapRequestHeader({@})', 'getIcapRequestHeader(String headerName)', '(String) return value of ICAP header field, or null if missing']
+
+			    		
 			    		,['setHeaders', 'setHeaders({@})', 'setHeaders(String/StringBuilder rawHttpHeader)', '(void) replace HTTP header by the provided string']
                         ,['addHeader', 'addHeader({@},{@})', 'addHeader(String name,String value)', '(void) add given header to HTTP message']
                         ,['rewriteHeader', 'rewriteHeader({@},{@})', 'rewriteHeader(String name,String value)', '(void) rewrite given header with provided value']
