@@ -183,6 +183,19 @@ public class HttpMessage {
 		return service!=null?service.getRespHeader(key.toLowerCase()):null;
 	}
 
+	/**
+	 * Return Icap request header value
+	 * @param key the Icap request header to look for
+	 * @return response header value, or null if non existing
+	 */
+	public String getIcapRequestHeader(String key){
+		return service!=null?service.getIcapHeader(key.toLowerCase()):null;
+	}
+	
+	public String getIcapRequestHeaders()
+	{
+		return service!=null?service.getIcapHeaders():null;
+	}
 //	<------------------------------------------------------------------------->  
 
 	
