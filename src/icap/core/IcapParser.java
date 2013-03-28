@@ -451,6 +451,14 @@ public TYPE getType(){
 	 * Returns the complete HTTP response header
 	 * @return Returns the entire HTTP response header 
 	 */
+	public String getIcapHeaders(){
+		return this.icapHeaders.toString();
+	}
+	
+	/**
+	 * Returns the complete HTTP response header
+	 * @return Returns the entire HTTP response header 
+	 */
 	public String getResponseHeaders(){
 		return this.resHeader.toString();
 	}
